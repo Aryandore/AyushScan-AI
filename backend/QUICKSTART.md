@@ -28,7 +28,7 @@ Enter your AWS credentials and set region to `ap-south-1`.
 
 1. Go to [AWS Bedrock Console](https://console.aws.amazon.com/bedrock)
 2. Click "Model access" → "Manage model access"
-3. Enable "Claude 3.5 Sonnet"
+3. Enable "Amazon Nova Pro"
 4. Click "Save changes"
 
 ### 4. Install Dependencies
@@ -69,7 +69,7 @@ You should get a JSON response with triage assessment!
 ## Common Issues
 
 **"Bedrock model not found"**
-→ Enable Claude 3.5 Sonnet in AWS Console
+→ Enable Amazon Nova Pro in AWS Console
 
 **"Access Denied"**
 → Check AWS credentials: `aws sts get-caller-identity`

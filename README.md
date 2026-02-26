@@ -37,7 +37,7 @@ Frontend (React) → API Gateway → Lambda Functions → AWS Services
 ### Backend (AWS Serverless)
 - **AWS Lambda** - Serverless compute
 - **AWS API Gateway** - REST API
-- **AWS Bedrock** - Claude 3.5 Sonnet AI
+- **AWS Bedrock** - Amazon Nova Pro AI
 - **AWS Rekognition** - Image analysis
 - **AWS Transcribe** - Voice-to-text
 - **AWS DynamoDB** - NoSQL database
@@ -143,7 +143,7 @@ List recent assessments.
 ### ✅ Implemented (Backend)
 - [x] Voice symptom recording (AWS Transcribe)
 - [x] Image analysis (AWS Rekognition)
-- [x] AI-powered triage (AWS Bedrock Claude)
+- [x] AI-powered triage (AWS Bedrock Nova Pro)
 - [x] PDF report generation
 - [x] Secure file storage (S3)
 - [x] Assessment history (DynamoDB)
@@ -224,7 +224,7 @@ Built for the **"AI for Bharat Hackathon"** powered by AWS
 ## 🙏 Acknowledgments
 
 - AWS for providing cloud infrastructure
-- Anthropic for Claude AI
+- Amazon for Nova Pro AI model
 - ASHA workers for their invaluable service to rural India
 
 ## 📞 Support

@@ -56,8 +56,8 @@ output = json
 1. Go to AWS Console → Bedrock
 2. Click "Model access" in left sidebar
 3. Click "Manage model access"
-4. Find "Anthropic" section
-5. Check "Claude 3.5 Sonnet"
+4. Find "Amazon" section
+5. Check "Nova Pro"
 6. Click "Request model access"
 7. Wait for approval (usually instant)
 
@@ -169,7 +169,7 @@ VITE_API_URL=https://YOUR_API_URL/dev
 
 **Solution:**
 1. Check model access in AWS Console → Bedrock
-2. Verify model ID in `shared/bedrock_service.py`
+2. Verify model ID in `shared/bedrock_service.py` is `amazon.nova-pro-v1:0`
 3. Ensure you're using the correct region (us-east-1 for Bedrock)
 
 ### Issue: "Access Denied" errors

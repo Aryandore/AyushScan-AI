@@ -42,8 +42,8 @@
 │                      AWS Services                                │
 │  ┌──────────────┐  ┌──────────────┐  ┌────────────────────┐   │
 │  │ AWS Bedrock  │  │     AWS      │  │   AWS Transcribe   │   │
-│  │   (Claude    │  │ Rekognition  │  │  (Voice-to-Text)   │   │
-│  │ Sonnet 3.5)  │  │ (Image Label │  │                    │   │
+│  │   (Amazon    │  │ Rekognition  │  │  (Voice-to-Text)   │   │
+│  │  Nova Pro)   │  │ (Image Label │  │                    │   │
 │  │              │  │  Detection)  │  │                    │   │
 │  └──────────────┘  └──────────────┘  └────────────────────┘   │
 │  ┌──────────────┐  ┌──────────────┐  ┌────────────────────┐   │
@@ -216,13 +216,13 @@ User → Frontend → Report Lambda
 
 ### BedrockService
 
-**Purpose**: Interface with AWS Bedrock for Claude AI
+**Purpose**: Interface with AWS Bedrock for Amazon Nova Pro AI
 
 **Key Methods**:
 - `analyze_symptoms()`: Analyze patient symptoms
 - `generate_report_content()`: Generate HTML for PDF report
 
-**Model**: Claude 3.5 Sonnet (`anthropic.claude-3-5-sonnet-20241022-v2:0`)
+**Model**: Amazon Nova Pro (`amazon.nova-pro-v1:0`)
 
 **Configuration**:
 - Temperature: 0.3 (conservative for medical advice)

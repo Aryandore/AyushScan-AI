@@ -84,7 +84,7 @@ List recent assessments
 ## 🔑 Key Features
 
 ### AI-Powered Triage
-- Uses AWS Bedrock with Claude 3.5 Sonnet
+- Uses AWS Bedrock with Amazon Nova Pro
 - Analyzes voice transcripts and image labels
 - Returns structured triage assessment with confidence scores
 
@@ -172,7 +172,7 @@ curl -X POST https://YOUR_API_URL/dev/triage \
 ## 🛠️ Troubleshooting
 
 ### Bedrock Model Not Found
-- Enable Claude 3.5 Sonnet in AWS Console → Bedrock → Model access
+- Enable Amazon Nova Pro in AWS Console → Bedrock → Model access
 
 ### Permission Errors
 - Check IAM permissions in serverless.yml
@@ -196,7 +196,7 @@ curl -X POST https://YOUR_API_URL/dev/triage \
 
 1. **Full AWS Integration** - Uses 7 AWS services seamlessly
 2. **Serverless Architecture** - Auto-scales, pay-per-use
-3. **AI-Powered** - Claude 3.5 Sonnet for medical triage
+3. **AI-Powered** - Amazon Nova Pro for medical triage
 4. **Production-Ready** - Error handling, logging, monitoring
 5. **Well-Documented** - Complete guides and examples
 6. **Cost-Effective** - ~$5-10/month for development

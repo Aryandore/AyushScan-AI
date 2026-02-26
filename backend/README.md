@@ -6,7 +6,7 @@ AWS serverless backend for AyushScan AI diagnostic triage application.
 
 - **AWS Lambda**: Serverless compute for API handlers
 - **AWS API Gateway**: REST API endpoints
-- **AWS Bedrock**: Claude AI for symptom analysis
+- **AWS Bedrock**: Amazon Nova Pro for symptom analysis
 - **AWS Rekognition**: Image analysis for visual symptoms
 - **AWS Transcribe**: Voice-to-text transcription
 - **AWS DynamoDB**: NoSQL database for assessments
@@ -60,7 +60,7 @@ backend/
 
 3. **Enable AWS Bedrock models**:
    - Go to AWS Console → Bedrock → Model access
-   - Request access to Claude 3.5 Sonnet model
+   - Request access to Amazon Nova Pro model
    - Wait for approval (usually instant)
 
 ## Deployment

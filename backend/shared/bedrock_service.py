@@ -1,18 +1,22 @@
 """
-AWS Bedrock service for Claude AI integration
+AWS Bedrock service for Amazon Nova Pro integration
 """
 import boto3
 import json
 import os
+import logging
 from typing import Optional, Dict, List
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 
 class BedrockService:
     def __init__(self):
         self.bedrock_region = os.environ.get('BEDROCK_REGION', 'us-east-1')
         self.client = boto3.client('bedrock-runtime', region_name=self.bedrock_region)
-        # Correct model ID for Claude Sonnet 4 on Bedrock
-        self.model_id = 'anthropic.claude-3-5-sonnet-20241022-v2:0'
+        # Amazon Nova Pro model ID
+        self.model_id = 'amazon.nova-pro-v1:0'
     
     def analyze_symptoms(
         self,
@@ -22,7 +26,7 @@ class BedrockService:
         image_s3_key: Optional[str] = None
     ) -> Dict:
         """
-        Analyze patient symptoms using AWS Bedrock Claude
+        Analyze patient symptoms using AWS Bedrock Amazon Nova Pro
         
         Args:
             voice_transcript: Patient's symptom description
@@ -41,33 +45,41 @@ class BedrockService:
             image_s3_key
         )
         
-        # Call Bedrock
+        # Call Bedrock with Nova Pro format
         try:
+            body = {
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": [
+                            {"text": prompt}
+                        ]
+                    }
+                ],
+                "inferenceConfig": {
+                    "maxTokens": 2000,
+                    "temperature": 0.3,
+                    "topP": 0.9
+                }
+            }
+            
             response = self.client.invoke_model(
                 modelId=self.model_id,
-                body=json.dumps({
-                    "anthropic_version": "bedrock-2023-05-31",
-                    "max_tokens": 2000,
-                    "temperature": 0.3,
-                    "messages": [
-                        {
-                            "role": "user",
-                            "content": prompt
-                        }
-                    ]
-                })
+                body=json.dumps(body),
+                contentType="application/json",
+                accept="application/json"
             )
             
-            # Parse response
+            # Parse Nova Pro response format
             response_body = json.loads(response['body'].read())
-            content = response_body['content'][0]['text']
+            output_text = response_body['output']['message']['content'][0]['text']
             
             # Extract JSON from response
-            result = self._parse_claude_response(content)
+            result = self._parse_nova_response(output_text)
             return result
             
         except Exception as e:
-            print(f"Bedrock error: {str(e)}")
+            logger.error(f"Bedrock Nova Pro error: {str(e)}")
             raise Exception(f"AI analysis failed: {str(e)}")
     
     def _build_triage_prompt(
@@ -77,7 +89,7 @@ class BedrockService:
         patient_info: Optional[Dict],
         image_s3_key: Optional[str]
     ) -> str:
-        """Build the prompt for Claude"""
+        """Build the prompt for Amazon Nova Pro"""
         prompt = """You are AyushScan AI, a medical triage assistant for ASHA workers in rural India.
 
 Your role is to analyze patient symptoms and provide a triage assessment. You MUST respond ONLY in valid JSON format.
@@ -131,17 +143,30 @@ Respond with JSON only, no other text:"""
         
         return prompt
     
-    def _parse_claude_response(self, content: str) -> Dict:
-        """Parse Claude's JSON response"""
+    def _parse_nova_response(self, content: str) -> Dict:
+        """Parse Amazon Nova Pro's JSON response"""
         try:
+            # Clean the response - remove markdown code blocks if present
+            clean_content = content.strip()
+            
+            # Remove markdown code blocks
+            if '```json' in clean_content:
+                start = clean_content.find('```json') + 7
+                end = clean_content.rfind('```')
+                clean_content = clean_content[start:end].strip()
+            elif '```' in clean_content:
+                start = clean_content.find('```') + 3
+                end = clean_content.rfind('```')
+                clean_content = clean_content[start:end].strip()
+            
             # Try to find JSON in the response
-            start_idx = content.find('{')
-            end_idx = content.rfind('}') + 1
+            start_idx = clean_content.find('{')
+            end_idx = clean_content.rfind('}') + 1
             
             if start_idx == -1 or end_idx == 0:
                 raise ValueError("No JSON found in response")
             
-            json_str = content[start_idx:end_idx]
+            json_str = clean_content[start_idx:end_idx]
             result = json.loads(json_str)
             
             # Validate required fields
@@ -162,13 +187,13 @@ Respond with JSON only, no other text:"""
             return result
             
         except json.JSONDecodeError as e:
-            print(f"JSON parse error: {str(e)}")
-            print(f"Content: {content}")
+            logger.error(f"JSON parse error: {str(e)}")
+            logger.error(f"Content: {content}")
             raise ValueError(f"Invalid JSON response from AI: {str(e)}")
     
     def generate_report_content(self, assessment_data: Dict) -> str:
         """
-        Generate professional HTML doctor referral letter
+        Generate professional HTML doctor referral letter using Amazon Nova Pro
         
         Args:
             assessment_data: Complete assessment record
@@ -196,23 +221,31 @@ Include the assessment ID and timestamp at the bottom.
 Respond with HTML only:"""
         
         try:
+            body = {
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": [
+                            {"text": prompt}
+                        ]
+                    }
+                ],
+                "inferenceConfig": {
+                    "maxTokens": 3000,
+                    "temperature": 0.5,
+                    "topP": 0.9
+                }
+            }
+            
             response = self.client.invoke_model(
                 modelId=self.model_id,
-                body=json.dumps({
-                    "anthropic_version": "bedrock-2023-05-31",
-                    "max_tokens": 3000,
-                    "temperature": 0.5,
-                    "messages": [
-                        {
-                            "role": "user",
-                            "content": prompt
-                        }
-                    ]
-                })
+                body=json.dumps(body),
+                contentType="application/json",
+                accept="application/json"
             )
             
             response_body = json.loads(response['body'].read())
-            html_content = response_body['content'][0]['text']
+            html_content = response_body['output']['message']['content'][0]['text']
             
             # Extract HTML if wrapped in markdown code blocks
             if '```html' in html_content:
@@ -227,5 +260,5 @@ Respond with HTML only:"""
             return html_content
             
         except Exception as e:
-            print(f"Report generation error: {str(e)}")
+            logger.error(f"Report generation error: {str(e)}")
             raise Exception(f"Report generation failed: {str(e)}")
