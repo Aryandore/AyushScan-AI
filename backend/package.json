@@ -1,0 +1,26 @@
+{
+  "name": "ayushscan-ai-backend",
+  "version": "1.0.0",
+  "description": "AWS Lambda backend for AyushScan AI",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "serverless deploy",
+    "deploy:dev": "serverless deploy --stage dev",
+    "deploy:prod": "serverless deploy --stage prod",
+    "remove": "serverless remove",
+    "logs": "serverless logs --function triage --tail",
+    "invoke:triage": "serverless invoke local --function triage --path test-data/triage-request.json"
+  },
+  "keywords": [
+    "aws",
+    "lambda",
+    "serverless",
+    "healthcare",
+    "ai"
+  ],
+  "author": "AyushScan AI Team",
+  "license": "MIT",
+  "devDependencies": {
+    "serverless": "^3.38.0"
+  }
+}

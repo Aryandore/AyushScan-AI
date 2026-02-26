@@ -1,0 +1,3 @@
+{
+  "body": "{\"patient_info\": {\"name\": \"Test Patient\", \"age\": 35, \"gender\": \"female\", \"location\": \"Test Village\"}, \"voice_transcript\": \"Patient complains of high fever for 3 days, severe headache, body aches, and feeling very weak. Temperature is around 102°F. No cough or breathing difficulty. Has been taking paracetamol but fever keeps coming back.\", \"image_s3_key\": null}"
+}

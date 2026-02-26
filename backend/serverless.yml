@@ -1,0 +1,102 @@
+service: ayushscan-ai
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.11
+  region: ap-south-1
+  stage: ${opt:stage, 'dev'}
+  environment:
+    DYNAMODB_TABLE: ayushscan-assessments-${self:provider.stage}
+    S3_BUCKET: ayushscan-storage-${self:provider.stage}
+    BEDROCK_REGION: us-east-1
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:Scan
+            - dynamodb:Query
+          Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+            - s3:DeleteObject
+          Resource: arn:aws:s3:::${self:provider.environment.S3_BUCKET}/*
+        - Effect: Allow
+          Action:
+            - bedrock:InvokeModel
+          Resource: "*"
+        - Effect: Allow
+          Action:
+            - rekognition:DetectLabels
+            - rekognition:DetectModerationLabels
+          Resource: "*"
+        - Effect: Allow
+          Action:
+            - transcribe:StartTranscriptionJob
+            - transcribe:GetTranscriptionJob
+          Resource: "*"
+
+functions:
+  triage:
+    handler: functions/triage/handler.lambda_handler
+    events:
+      - http:
+          path: /triage
+          method: post
+          cors: true
+    timeout: 30
+
+  report:
+    handler: functions/report/handler.lambda_handler
+    events:
+      - http:
+          path: /report
+          method: post
+          cors: true
+    timeout: 30
+
+  uploadUrl:
+    handler: functions/upload/handler.lambda_handler
+    events:
+      - http:
+          path: /upload-url
+          method: get
+          cors: true
+
+  assessments:
+    handler: functions/assessments/handler.lambda_handler
+    events:
+      - http:
+          path: /assessments
+          method: get
+          cors: true
+
+resources:
+  Resources:
+    AssessmentsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        AttributeDefinitions:
+          - AttributeName: assessment_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: assessment_id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    StorageBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:provider.environment.S3_BUCKET}
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders: ['*']
+              AllowedMethods: [GET, PUT, POST]
+              AllowedOrigins: ['*']
