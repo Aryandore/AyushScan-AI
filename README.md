@@ -4,8 +4,15 @@
 [![Serverless](https://img.shields.io/badge/Serverless-Framework-red)](https://www.serverless.com/)
 [![Python](https://img.shields.io/badge/Python-3.11-blue)](https://www.python.org/)
 [![React](https://img.shields.io/badge/React-18-blue)](https://reactjs.org/)
+[![Deployed](https://img.shields.io/badge/Status-Deployed-success)](https://aws.amazon.com/)
 
 AI-powered diagnostic triage web application for ASHA workers in rural India. Built for the **"AI for Bharat Hackathon"** powered by AWS.
+
+## 🚀 Live Demo
+
+- **Backend API**: Deployed on AWS Lambda (ap-south-1 region)
+- **Frontend**: Available for local testing (AWS Amplify deployment coming soon)
+- **Status**: ✅ Fully functional with real AWS services
 
 ## 🎯 Problem Statement
 
@@ -105,26 +112,28 @@ ayushscan-ai/
 ## 🚀 Quick Start
 
 ### Prerequisites
-- AWS Account
-- Node.js and npm
-- Python 3.11
+- AWS Account with configured credentials
+- Node.js 18+ and npm
+- Python 3.11+
 - Serverless Framework
 
-### Backend Deployment
+### Backend Deployment (Already Deployed ✅)
 
 ```bash
 # Install Serverless Framework
 npm install -g serverless
 
-# Configure AWS
+# Configure AWS credentials
 aws configure
 
 # Deploy backend
 cd backend
 pip install -r requirements.txt
 npm install
-serverless deploy --stage dev
+serverless deploy --stage dev --region ap-south-1
 ```
+
+**Deployment Status**: ✅ Backend is live on AWS Lambda in ap-south-1 region
 
 ### Frontend Development
 
@@ -141,6 +150,18 @@ npm run dev
 npm run build
 ```
 
+### Deploy Frontend to AWS Amplify
+
+1. Go to [AWS Amplify Console](https://console.aws.amazon.com/amplify/)
+2. Click "New app" → "Host web app"
+3. Connect GitHub repository: `Aryandore/AyushScan-AI`
+4. Select `main` branch
+5. Build settings will auto-detect from `amplify.yml`
+6. Add environment variable:
+   - Key: `VITE_API_URL`
+   - Value: Your API Gateway URL
+7. Click "Save and deploy"
+
 **Detailed guides:**
 - [Backend Quick Start](backend/QUICKSTART.md)
 - [Frontend README](frontend/README.md)
@@ -148,6 +169,8 @@ npm run build
 - [Architecture Overview](backend/ARCHITECTURE.md)
 
 ## 📡 API Endpoints
+
+**Base URL**: `https://[your-api-id].execute-api.ap-south-1.amazonaws.com/dev`
 
 ### POST /triage
 Analyze patient symptoms and return triage assessment.
@@ -170,21 +193,38 @@ Analyze patient symptoms and return triage assessment.
 {
   "assessment_id": "uuid",
   "triage_level": "YELLOW",
-  "confidence_score": 0.85,
+  "confidence_score": 85,
   "symptoms_detected": ["fever", "headache"],
   "primary_concern": "Possible viral infection",
-  "recommended_action": "Visit clinic within 24 hours"
+  "recommended_action": "Visit clinic within 24 hours",
+  "urgency_reason": "Persistent symptoms require medical evaluation",
+  "follow_up_questions": ["Any breathing difficulty?", "Fever above 103F?"]
 }
 ```
 
 ### GET /upload-url
 Generate presigned S3 URL for image upload.
 
+**Response:**
+```json
+{
+  "upload_url": "https://s3.amazonaws.com/...",
+  "s3_key": "images/uuid.jpg"
+}
+```
+
 ### POST /report
 Generate PDF report for an assessment.
 
+**Request:**
+```json
+{
+  "assessment_id": "uuid"
+}
+```
+
 ### GET /assessments
-List recent assessments.
+List recent assessments (returns array of assessment objects).
 
 ## 🎨 Features
 
@@ -279,12 +319,21 @@ Mock mode is enabled by default (`VITE_MOCK_API=true` in `.env`)
 
 - **🌐 Multi-language Support**: 6 Indian languages for voice input
 - **📱 Mobile-First Design**: Responsive UI for rural connectivity
-- **🎨 Color-Coded Triage**: Instant visual severity assessment
-- **⚡ Real-time Processing**: Fast AI analysis with Bedrock Nova Pro
-- **💾 Offline-Ready**: Mock mode works without backend
+- **🎨 Color-Coded Triage**: Instant visual severity assessment (GREEN/YELLOW/RED)
+- **⚡ Real-time Processing**: Fast AI analysis with Amazon Bedrock Nova Pro
+- **💾 Dual Mode**: Works with mock data or real AWS backend
 - **🔒 Secure**: End-to-end encryption and IAM security
 - **💰 Cost-Effective**: Serverless architecture scales to zero
-- **🚀 Production-Ready**: Complete CI/CD with AWS Amplify
+- **🚀 Production-Ready**: Deployed on AWS with complete CI/CD
+
+## 🏆 Hackathon Achievements
+
+- ✅ **Backend Deployed**: Live on AWS Lambda (ap-south-1)
+- ✅ **9 AWS Services**: Bedrock, Rekognition, Lambda, API Gateway, DynamoDB, S3, CloudWatch, IAM, Transcribe
+- ✅ **Full-Stack Application**: React frontend + Python backend
+- ✅ **Real AI Integration**: Amazon Nova Pro for medical triage
+- ✅ **Production Infrastructure**: Serverless Framework with IaC
+- ✅ **Complete Documentation**: Architecture, deployment, and API docs
 
 ## 🤝 Contributing
 
