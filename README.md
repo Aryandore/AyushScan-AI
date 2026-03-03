@@ -22,15 +22,35 @@ AyushScan AI enables ASHA workers to:
 ## 🏗️ Architecture
 
 ```
-Frontend (React) → API Gateway → Lambda Functions → AWS Services
-                                        ↓
-                    ┌──────────────────┴──────────────────┐
-                    ↓                  ↓                   ↓
-              AWS Bedrock        AWS Rekognition     DynamoDB
-              (Claude AI)        (Image Analysis)    (Database)
-                    ↓                                      ↓
-                  S3 (File Storage)                  CloudWatch
+ASHA Worker (Mobile/Web)
+         ↓
+   React Frontend (Vite + Tailwind)
+         ↓
+   API Gateway (REST API)
+         ↓
+   Lambda Functions
+         ↓
+    ┌────┴────┬──────────────┬──────────────┐
+    ↓         ↓              ↓              ↓
+AWS Bedrock  Rekognition  DynamoDB        S3
+(Nova Pro)   (Images)     (Data)      (Storage)
+    ↓         ↓              ↓              ↓
+         Triage Result
+              ↓
+    PDF Report Generation
+              ↓
+         Frontend Display
 ```
+
+### Data Flow
+1. ASHA worker records symptoms (voice/text) and captures image
+2. Frontend uploads image to S3 via presigned URL
+3. API Gateway routes request to Lambda
+4. Rekognition analyzes image for visual symptoms
+5. Bedrock Nova Pro processes combined data for triage
+6. DynamoDB stores assessment results
+7. Report generator creates PDF and saves to S3
+8. Frontend displays color-coded results and recommendations
 
 ## 🚀 Tech Stack
 
@@ -44,10 +64,14 @@ Frontend (React) → API Gateway → Lambda Functions → AWS Services
 - **AWS S3** - File storage
 - **Serverless Framework** - Infrastructure as Code
 
-### Frontend (Coming Soon)
-- **React** - UI framework
+### Frontend
+- **React 18** - UI framework
 - **Vite** - Build tool
 - **Tailwind CSS** - Styling
+- **React Router** - Navigation
+- **Axios** - HTTP client
+- **Lucide React** - Icons
+- **jsPDF & html2canvas** - PDF generation
 - **AWS Amplify** - Hosting
 
 ## 📁 Project Structure
@@ -66,7 +90,15 @@ ayushscan-ai/
 │       ├── report/
 │       ├── upload/
 │       └── assessments/
-├── frontend/                   # React frontend (coming soon)
+├── frontend/                   # React frontend
+│   ├── src/
+│   │   ├── components/        # React components
+│   │   ├── pages/             # Page components
+│   │   ├── services/          # API services
+│   │   └── App.jsx
+│   ├── package.json
+│   ├── vite.config.js
+│   └── tailwind.config.js
 └── .kiro/specs/               # Project specifications
 ```
 
@@ -94,8 +126,24 @@ npm install
 serverless deploy --stage dev
 ```
 
+### Frontend Development
+
+```bash
+# Install dependencies
+cd frontend
+npm install
+
+# Run development server
+npm run dev
+# App runs at http://localhost:5173
+
+# Build for production
+npm run build
+```
+
 **Detailed guides:**
 - [Backend Quick Start](backend/QUICKSTART.md)
+- [Frontend README](frontend/README.md)
 - [Deployment Guide](backend/DEPLOYMENT.md)
 - [Architecture Overview](backend/ARCHITECTURE.md)
 
@@ -140,23 +188,30 @@ List recent assessments.
 
 ## 🎨 Features
 
-### ✅ Implemented (Backend)
-- [x] Voice symptom recording (AWS Transcribe)
+### ✅ Implemented
+- [x] Voice symptom recording (Web Speech API + AWS Transcribe)
+- [x] Multi-language support (Hindi, Marathi, Tamil, Telugu, Bengali, English)
+- [x] Image capture and upload to S3
 - [x] Image analysis (AWS Rekognition)
 - [x] AI-powered triage (AWS Bedrock Nova Pro)
+- [x] Color-coded triage levels (GREEN/YELLOW/RED)
 - [x] PDF report generation
 - [x] Secure file storage (S3)
 - [x] Assessment history (DynamoDB)
 - [x] RESTful API (API Gateway)
+- [x] React web interface
+- [x] Mobile-responsive design
+- [x] Mock mode for testing without backend
+- [x] 4-step assessment wizard
+- [x] Real-time confidence scores
+- [x] Emergency alerts for critical cases
 
-### 🔜 Coming Soon (Frontend)
-- [ ] React web interface
-- [ ] Voice recorder component
-- [ ] Image capture component
-- [ ] Triage result display
-- [ ] PDF report viewer
-- [ ] Responsive design
+### 🔜 Coming Soon
 - [ ] AWS Amplify deployment
+- [ ] Real-time notifications
+- [ ] Analytics dashboard
+- [ ] Multi-user support
+- [ ] Offline mode with sync
 
 ## 💰 Cost Estimate
 
@@ -188,6 +243,7 @@ List recent assessments.
 
 ## 🧪 Testing
 
+### Backend Testing
 ```bash
 # Test triage endpoint
 serverless invoke local --function triage --path test-data/triage-request.json
@@ -196,12 +252,39 @@ serverless invoke local --function triage --path test-data/triage-request.json
 serverless logs --function triage --tail
 ```
 
+### Frontend Testing
+The frontend includes mock mode for testing without backend:
+
+```bash
+cd frontend
+npm run dev
+```
+
+**Demo Cases Available:**
+- 🟢 **Green Demo**: Mild case (common cold, low priority)
+- 🟡 **Yellow Demo**: Moderate case (dengue fever, clinic visit needed)
+- 🔴 **Red Demo**: Emergency case (cardiac emergency, immediate action)
+
+Mock mode is enabled by default (`VITE_MOCK_API=true` in `.env`)
+
 ## 📚 Documentation
 
 - [Backend README](backend/README.md) - API documentation
+- [Frontend README](frontend/README.md) - Frontend setup and features
 - [Deployment Guide](backend/DEPLOYMENT.md) - Step-by-step deployment
 - [Architecture](backend/ARCHITECTURE.md) - System design
 - [Quick Start](backend/QUICKSTART.md) - 10-minute setup
+
+## 🎯 Key Highlights
+
+- **🌐 Multi-language Support**: 6 Indian languages for voice input
+- **📱 Mobile-First Design**: Responsive UI for rural connectivity
+- **🎨 Color-Coded Triage**: Instant visual severity assessment
+- **⚡ Real-time Processing**: Fast AI analysis with Bedrock Nova Pro
+- **💾 Offline-Ready**: Mock mode works without backend
+- **🔒 Secure**: End-to-end encryption and IAM security
+- **💰 Cost-Effective**: Serverless architecture scales to zero
+- **🚀 Production-Ready**: Complete CI/CD with AWS Amplify
 
 ## 🤝 Contributing
 
