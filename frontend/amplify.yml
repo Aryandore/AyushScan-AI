@@ -3,9 +3,12 @@ frontend:
   phases:
     preBuild:
       commands:
-        - cd frontend && npm ci
+        - cd frontend
+        - npm ci
     build:
       commands:
+        - echo "VITE_MOCK_API=$VITE_MOCK_API" >> .env
+        - echo "VITE_API_URL=$VITE_API_URL" >> .env
         - npm run build
   artifacts:
     baseDirectory: frontend/dist
