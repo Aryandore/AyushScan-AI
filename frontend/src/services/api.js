@@ -12,37 +12,45 @@ const api = axios.create({
   },
 });
 
+// Module-level variable to track current mock type
+let currentMockType = 'green';
+
+// Export function to set mock type
+export const setMockType = (type) => {
+  currentMockType = type.toLowerCase();
+};
+
 // Mock responses
 const MOCK_RESPONSES = {
-  GREEN: {
-    assessment_id: "demo-001",
+  green: {
+    assessment_id: "demo-green-001",
     triage_level: "GREEN",
     confidence_score: 82,
     symptoms_detected: ["Mild fever", "Common cold", "Fatigue"],
-    primary_concern: "Upper respiratory infection",
+    primary_concern: "Upper Respiratory Infection",
     recommended_action: "Rest at home, drink fluids, paracetamol for fever",
     urgency_reason: "Mild viral infection, no red flag symptoms",
-    follow_up_questions: ["Fever above 103F?", "Breathing difficulty?"]
+    follow_up_questions: ["Has the fever exceeded 102°F?", "Any difficulty breathing?"]
   },
-  YELLOW: {
-    assessment_id: "demo-002",
+  yellow: {
+    assessment_id: "demo-yellow-002",
     triage_level: "YELLOW",
     confidence_score: 88,
-    symptoms_detected: ["High fever 103F", "Severe headache", "Body pain", "Skin rash"],
+    symptoms_detected: ["High fever 103°F", "Severe headache", "Body pain", "Skin rash"],
     primary_concern: "Possible Dengue Fever",
-    recommended_action: "Visit PHC within 24 hours, get blood test, drink ORS",
-    urgency_reason: "Classic dengue warning signs, needs platelet monitoring",
-    follow_up_questions: ["Bleeding from gums?", "Vomiting?", "Platelet count?"]
+    recommended_action: "Visit clinic within 24 hours, get dengue blood test",
+    urgency_reason: "Classic dengue pattern — fever, joint pain, rash combination",
+    follow_up_questions: ["When did the rash first appear?", "Any bleeding from gums or nose?"]
   },
-  RED: {
-    assessment_id: "demo-003",
+  red: {
+    assessment_id: "demo-red-003",
     triage_level: "RED",
     confidence_score: 96,
-    symptoms_detected: ["Chest pain", "Left arm pain", "Breathing difficulty", "Sweating"],
-    primary_concern: "SUSPECTED HEART ATTACK - Cardiac Emergency",
-    recommended_action: "CALL 108 IMMEDIATELY. Keep patient still. Give aspirin if available.",
-    urgency_reason: "Classic cardiac emergency symptoms, every minute is critical",
-    follow_up_questions: ["Is patient conscious?", "Known heart condition?", "Time since onset?"]
+    symptoms_detected: ["Chest pain", "Left arm pain", "Difficulty breathing", "Heavy sweating", "Confusion"],
+    primary_concern: "Suspected Cardiac Emergency",
+    recommended_action: "CALL 108 IMMEDIATELY — suspected heart attack",
+    urgency_reason: "Multiple classic cardiac warning signs present simultaneously",
+    follow_up_questions: ["Is the chest pain crushing or pressure-like?", "Is patient conscious?"]
   }
 };
 
@@ -51,8 +59,7 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 export const submitAssessment = async (data) => {
   if (MOCK_MODE) {
     await delay(2000);
-    const mockLevel = data.mockLevel || 'GREEN';
-    return { data: MOCK_RESPONSES[mockLevel] };
+    return { data: MOCK_RESPONSES[currentMockType] || MOCK_RESPONSES['green'] };
   }
   
   try {
@@ -62,8 +69,7 @@ export const submitAssessment = async (data) => {
     console.error('API failed, falling back to mock:', error);
     // Fallback to mock so demo never breaks
     await delay(1000);
-    const mockLevel = data.mockLevel || 'GREEN';
-    return { data: MOCK_RESPONSES[mockLevel] };
+    return { data: MOCK_RESPONSES[currentMockType] || MOCK_RESPONSES['green'] };
   }
 };
 
@@ -149,9 +155,9 @@ export const getAssessments = async () => {
     return {
       data: {
         assessments: [
-          MOCK_RESPONSES.GREEN,
-          MOCK_RESPONSES.YELLOW,
-          MOCK_RESPONSES.RED
+          MOCK_RESPONSES.green,
+          MOCK_RESPONSES.yellow,
+          MOCK_RESPONSES.red
         ]
       }
     };
@@ -166,9 +172,9 @@ export const getAssessments = async () => {
     return {
       data: {
         assessments: [
-          MOCK_RESPONSES.GREEN,
-          MOCK_RESPONSES.YELLOW,
-          MOCK_RESPONSES.RED
+          MOCK_RESPONSES.green,
+          MOCK_RESPONSES.yellow,
+          MOCK_RESPONSES.red
         ]
       }
     };

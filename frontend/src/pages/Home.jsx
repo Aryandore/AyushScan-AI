@@ -1,11 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import { Mic, Camera, Brain, FileText, ArrowRight } from 'lucide-react';
+import { setMockType } from '../services/api';
 
 function Home() {
   const navigate = useNavigate();
 
   const handleDemoClick = (level) => {
-    navigate('/assessment', { state: { demoMode: level } });
+    setMockType(level);
+    navigate(`/assessment?demo=${level}`);
   };
 
   const awsServices = [
@@ -126,7 +128,7 @@ function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <button
-              onClick={() => handleDemoClick('GREEN')}
+              onClick={() => handleDemoClick('green')}
               className="p-6 border-2 border-primary rounded-lg hover:bg-primary/5 transition-colors text-left"
             >
               <div className="text-2xl mb-2">🟢</div>
@@ -135,7 +137,7 @@ function Home() {
             </button>
 
             <button
-              onClick={() => handleDemoClick('YELLOW')}
+              onClick={() => handleDemoClick('yellow')}
               className="p-6 border-2 border-warning-amber rounded-lg hover:bg-warning-amber/5 transition-colors text-left"
             >
               <div className="text-2xl mb-2">🟡</div>
@@ -144,7 +146,7 @@ function Home() {
             </button>
 
             <button
-              onClick={() => handleDemoClick('RED')}
+              onClick={() => handleDemoClick('red')}
               className="p-6 border-2 border-emergency-red rounded-lg hover:bg-emergency-red/5 transition-colors text-left"
             >
               <div className="text-2xl mb-2">🔴</div>

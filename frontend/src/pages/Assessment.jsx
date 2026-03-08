@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Loader } from 'lucide-react';
 import PatientForm from '../components/PatientForm';
 import VoiceRecorder from '../components/VoiceRecorder';
 import ImageCapture from '../components/ImageCapture';
-import { submitAssessment } from '../services/api';
+import { submitAssessment, setMockType } from '../services/api';
 
 function Assessment() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const demoMode = location.state?.demoMode;
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -22,6 +23,12 @@ function Assessment() {
   });
 
   useEffect(() => {
+    // Read demo parameter from URL and set mock type
+    const demo = searchParams.get('demo');
+    if (demo) {
+      setMockType(demo);
+    }
+    
     if (demoMode) {
       // Pre-fill demo data
       setAssessmentData({
@@ -42,7 +49,7 @@ function Assessment() {
         image: { skipped: true }
       });
     }
-  }, [demoMode]);
+  }, [demoMode, searchParams]);
 
   const totalSteps = 4;
 
@@ -76,8 +83,7 @@ function Assessment() {
       
       // Submit assessment
       const response = await submitAssessment({
-        ...assessmentData,
-        mockLevel: demoMode
+        ...assessmentData
       });
       
       await new Promise(resolve => setTimeout(resolve, 500));
