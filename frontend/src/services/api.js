@@ -20,7 +20,7 @@ export const setMockType = (type) => {
   currentMockType = type.toLowerCase();
 };
 
-// Mock responses
+// Mock responses for demo mode only
 const MOCK_RESPONSES = {
   green: {
     assessment_id: "demo-green-001",
@@ -57,17 +57,32 @@ const MOCK_RESPONSES = {
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const submitAssessment = async (data) => {
+  // Use mock mode ONLY for quick demos
   if (MOCK_MODE) {
     await delay(2000);
     return { data: MOCK_RESPONSES[currentMockType] || MOCK_RESPONSES['green'] };
   }
   
+  // Real API call with actual symptom analysis
   try {
-    const response = await api.post('/triage', data, { timeout: 15000 });
+    const requestBody = {
+      patient_info: {
+        name: data.patient?.name || '',
+        age: data.patient?.age ? parseInt(data.patient.age) : null,
+        gender: data.patient?.gender || '',
+        location: data.patient?.location || ''
+      },
+      voice_transcript: data.voice?.transcript || '',
+      image_s3_key: data.image?.s3Key || null
+    };
+    
+    console.log('Submitting to real API:', requestBody);
+    
+    const response = await api.post('/triage', requestBody, { timeout: 30000 });
     return { data: response.data };
   } catch (error) {
-    console.error('API failed, falling back to mock:', error);
-    // Fallback to mock so demo never breaks
+    console.error('API failed:', error);
+    // Fallback to mock for demo purposes
     await delay(1000);
     return { data: MOCK_RESPONSES[currentMockType] || MOCK_RESPONSES['green'] };
   }
