@@ -1,12 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { Mic, Camera, Brain, FileText, ArrowRight } from 'lucide-react';
-import { setMockType } from '../services/api';
 
 function Home() {
   const navigate = useNavigate();
 
   const handleDemoClick = (level) => {
-    setMockType(level);
     navigate(`/assessment?demo=${level}`);
   };
 

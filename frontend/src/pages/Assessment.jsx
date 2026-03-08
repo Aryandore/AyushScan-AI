@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight, Loader } from 'lucide-react';
 import PatientForm from '../components/PatientForm';
 import VoiceRecorder from '../components/VoiceRecorder';
 import ImageCapture from '../components/ImageCapture';
-import { submitAssessment, setMockType } from '../services/api';
+import { submitAssessment } from '../services/api';
 
 function Assessment() {
   const navigate = useNavigate();
@@ -23,28 +23,32 @@ function Assessment() {
   });
 
   useEffect(() => {
-    // Read demo parameter from URL and set mock type
+    // Read demo parameter from URL
     const demo = searchParams.get('demo');
-    if (demo) {
-      setMockType(demo);
-    }
     
-    if (demoMode) {
-      // Pre-fill demo data
+    if (demo || demoMode) {
+      // Pre-fill demo data based on type
+      const demoType = demo || demoMode;
+      let transcript = '';
+      
+      if (demoType === 'red') {
+        transcript = 'Patient has severe chest pain radiating to left arm, heavy sweating, difficulty breathing, age 65';
+      } else if (demoType === 'yellow') {
+        transcript = 'Patient has high fever 103F, severe headache, body pain, skin rash on arms, joint pain for 3 days';
+      } else {
+        transcript = 'Patient has mild fever, runny nose, sore throat, slight fatigue';
+      }
+      
       setAssessmentData({
         patient: {
           name: 'Demo Patient',
-          age: '45',
+          age: demoType === 'red' ? '65' : '45',
           gender: 'male',
           location: 'Rural Village'
         },
         voice: {
           language: 'en-IN',
-          transcript: demoMode === 'RED' 
-            ? 'Patient has severe chest pain, left arm pain, difficulty breathing, and sweating'
-            : demoMode === 'YELLOW'
-            ? 'Patient has high fever 103F, severe headache, body pain, and skin rash'
-            : 'Patient has mild fever, common cold symptoms, and fatigue'
+          transcript: transcript
         },
         image: { skipped: true }
       });
