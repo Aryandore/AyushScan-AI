@@ -7,6 +7,8 @@ provider:
   runtime: python3.11
   region: ap-south-1
   stage: ${opt:stage, 'dev'}
+  timeout: 30
+  memorySize: 512
   environment:
     DYNAMODB_TABLE: ayushscan-assessments-${self:provider.stage}
     S3_BUCKET: ayushscan-storage-${self:provider.stage}
@@ -16,25 +18,29 @@ provider:
       statements:
         - Effect: Allow
           Action:
+            - bedrock:InvokeModel
+            - bedrock:InvokeModelWithResponseStream
+          Resource:
+            - "arn:aws:bedrock:us-east-1:*:inference-profile/us.amazon.nova-pro-v1:0"
+            - "arn:aws:bedrock:*::foundation-model/*"
+        - Effect: Allow
+          Action:
             - dynamodb:PutItem
             - dynamodb:GetItem
             - dynamodb:Scan
             - dynamodb:Query
-          Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}
+          Resource: "*"
         - Effect: Allow
           Action:
             - s3:PutObject
             - s3:GetObject
             - s3:DeleteObject
-          Resource: arn:aws:s3:::${self:provider.environment.S3_BUCKET}/*
-        - Effect: Allow
-          Action:
-            - bedrock:InvokeModel
           Resource: "*"
         - Effect: Allow
           Action:
             - rekognition:DetectLabels
             - rekognition:DetectModerationLabels
+            - rekognition:DetectText
           Resource: "*"
         - Effect: Allow
           Action:
@@ -45,24 +51,27 @@ provider:
 functions:
   triage:
     handler: functions/triage/handler.lambda_handler
+    timeout: 30
+    memorySize: 512
     events:
       - http:
           path: /triage
           method: post
           cors: true
-    timeout: 30
 
   report:
     handler: functions/report/handler.lambda_handler
+    timeout: 30
+    memorySize: 512
     events:
       - http:
           path: /report
           method: post
           cors: true
-    timeout: 30
 
   uploadUrl:
     handler: functions/upload/handler.lambda_handler
+    timeout: 10
     events:
       - http:
           path: /upload-url
@@ -71,6 +80,7 @@ functions:
 
   assessments:
     handler: functions/assessments/handler.lambda_handler
+    timeout: 10
     events:
       - http:
           path: /assessments

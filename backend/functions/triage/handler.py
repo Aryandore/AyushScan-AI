@@ -79,7 +79,9 @@ Examples:
                     "temperature": 0.3,
                     "topP": 0.9
                 }
-            })
+            }),
+            contentType='application/json',
+            accept='application/json'
         )
         
         result = json.loads(response['body'].read())
